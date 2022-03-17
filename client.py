@@ -6,7 +6,7 @@ from Crypto.Util.Padding import pad
 from Crypto.Util.Padding import unpad
 def criptografar(key, iv, text):
     pass
-def descriptografar(key, iv, text):
+def descriptografar(key, text):
     pass
 HOST = "localhost"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server

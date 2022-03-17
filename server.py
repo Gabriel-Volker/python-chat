@@ -12,7 +12,7 @@ PORT = 8080  # Port to listen on (non-privileged ports are > 1023)
 
 def criptografar(key, iv, text):
     pass
-def descriptografar(key, iv, text):
+def descriptografar(key, text):
     pass
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
