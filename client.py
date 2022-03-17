@@ -1,7 +1,13 @@
 # echo-client.py
 
 import socket
-
+from Cryptodome.Cipher import AES
+from Crypto.Util.Padding import pad
+from Crypto.Util.Padding import unpad
+def criptografar(key, iv, text):
+    pass
+def descriptografar(key, iv, text):
+    pass
 HOST = "localhost"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server
 

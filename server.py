@@ -3,9 +3,17 @@
 # from time import sleep
 from multiprocessing.connection import wait
 import socket
+from Cryptodome.Cipher import AES
+from Crypto.Util.Padding import pad
+from Crypto.Util.Padding import unpad
 
 HOST = "localhost"  # Standard loopback interface address (localhost)
 PORT = 8080  # Port to listen on (non-privileged ports are > 1023)
+
+def criptografar(key, iv, text):
+    pass
+def descriptografar(key, iv, text):
+    pass
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
