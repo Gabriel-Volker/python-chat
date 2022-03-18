@@ -1,13 +1,27 @@
 # echo-client.py
 
+from base64 import encode
 import socket
 from Cryptodome.Cipher import AES
 from Crypto.Util.Padding import pad
 from Crypto.Util.Padding import unpad
-def criptografar(key, iv, text):
-    pass
-def descriptografar(key, text):
-    pass
+import json
+
+key = 'minhasenhaaaaaaa'
+def criptografar(senha, text):
+    cipher = AES.new(senha.encode("utf-8"), AES.MODE_CBC)
+    iv = cipher.iv
+    textocodificado = iv + cipher.encrypt(pad(bytes(text, encoding='utf8'), AES.block_size))
+    return textocodificado
+
+def descriptografar(senha, text):
+    iv = text[:16]
+    cipher = AES.new(senha.encode("utf-8"), AES.MODE_CBC, iv)
+    textocodificado = text[16:]
+    textocodificado = cipher.decrypt(textocodificado)
+    textocodificado = unpad(textocodificado, AES.block_size)
+    textocodificado = textocodificado.decode()
+    return textocodificado
 HOST = "localhost"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server
 
@@ -18,16 +32,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         msg = input("Escreva uma Mensagem: ")
         if msg == "stop":
             print("Conexão Encerrada")
-            s.sendall(bytes(msg, encoding='utf-8'))
+            s.sendall(criptografar(key, msg))
             break
         if msg != "":
-          bitz = bytes(msg, encoding='utf-8')
-          s.sendall(bitz)
-          data = s.recv(1024)
-          if data.decode() == "stop":
+          enviar = criptografar(key, msg)
+          s.sendall(enviar)
+          data = s.recv(6144)
+          data = descriptografar(key, data)
+          if data == "stop":
               print("Conexão Encerrada")
               break
-          print("Resposta do Servidor: " + data.decode())
+          print("Resposta do Servidor: " + data)
         else:
           print("Mensgem nula, escreva novamente.")
           
