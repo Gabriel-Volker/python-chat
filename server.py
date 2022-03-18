@@ -3,9 +3,29 @@
 # from time import sleep
 from multiprocessing.connection import wait
 import socket
+from Cryptodome.Cipher import AES
+from Crypto.Util.Padding import pad
+from Crypto.Util.Padding import unpad
+import json
 
 HOST = "localhost"  # Standard loopback interface address (localhost)
 PORT = 8080  # Port to listen on (non-privileged ports are > 1023)
+
+key = 'minhasenhaaaaaaa'
+def criptografar(senha, text):
+    cipher = AES.new(senha.encode("utf-8"), AES.MODE_CBC)
+    iv = cipher.iv
+    textocodificado = iv + cipher.encrypt(pad(text.encode("utf-8"), AES.block_size))
+    return textocodificado
+
+def descriptografar(senha, text):
+    iv = text[:16]
+    cipher = AES.new(senha.encode("utf-8"), AES.MODE_CBC, iv)
+    textocodificado = text[16:]
+    textocodificado = cipher.decrypt(textocodificado)
+    textocodificado = unpad(textocodificado, AES.block_size)
+    textocodificado = textocodificado.decode()
+    return textocodificado
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -15,21 +35,21 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f"Connected by {addr}")
         while True:
 
-            data = conn.recv(1024)
-            if data.decode() == "stop":
+            data = conn.recv(6144)
+            data = descriptografar(key, data)
+            if data == "stop":
                 print("Conexão encerrada.")
                 break
-            print(data.decode())
+            print(data)
             while True:
               msg = input("Write your message: ")
               if msg == "stop":
-                  conn.sendall(bytes("stop", encoding='utf-8'))
+                  conn.sendall(criptografar(key, msg))
                   print("Conexão Encerrada")
                   conn.close()
                   break
               if msg != '': 
-                  bitzada = bytes(msg, encoding='utf-8')
-                  conn.sendall(bitzada)
+                  conn.sendall(criptografar(key, msg))
                   break
               else:
                   print("msg nula, tente dnv")
