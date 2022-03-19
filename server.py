@@ -1,14 +1,11 @@
 # echo-server.py
 
-# from time import sleep
-from multiprocessing.connection import wait
 import socket
 from Cryptodome.Cipher import AES
-from Crypto.Util.Padding import pad
-from Crypto.Util.Padding import unpad
-import json
+from Cryptodome.Util.Padding import pad
+from Cryptodome.Util.Padding import unpad
 
-HOST = "localhost"  # Standard loopback interface address (localhost)
+HOST = "192.168.1.178"  # Standard loopback interface address (localhost)
 PORT = 8080  # Port to listen on (non-privileged ports are > 1023)
 
 key = 'minhasenhaaaaaaa'
