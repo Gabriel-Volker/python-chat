@@ -52,5 +52,8 @@ class SERVER:
         textocodificado = unpad(textocodificado, AES.block_size)
         textocodificado = textocodificado.decode()
         return textocodificado
-conexao = SERVER("192.168.1.178", 8080, "minhasenhaaaaaaa")
+ip = input("Digite seu ip interno: ")
+port = int(input("Digite a porta da conexão: "))
+senha = input("Digite uma senha de 16 caracteres para a conexão (mesma do cliente): ")
+conexao = SERVER(ip, port, senha)
 conexao.connect()

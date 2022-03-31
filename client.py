@@ -1,13 +1,11 @@
 # echo-client.py
 
-from base64 import encode
 import socket
 from Cryptodome.Cipher import AES
 from Crypto.Util.Padding import pad
 from Crypto.Util.Padding import unpad
-import json
 
-key = 'minhasenhaaaaaaa'
+key = input("Digite a senha de 16 caracteres para a conexão: ")
 def criptografar(senha, text):
     cipher = AES.new(senha.encode("utf-8"), AES.MODE_CBC)
     iv = cipher.iv
@@ -22,8 +20,8 @@ def descriptografar(senha, text):
     textocodificado = unpad(textocodificado, AES.block_size)
     textocodificado = textocodificado.decode()
     return textocodificado
-HOST = "localhost"  # The server's hostname or IP address
-PORT = 8080  # The port used by the server
+HOST = input("Digite o ip do servidor: ")  # The server's hostname or IP address
+PORT = int(input("Digite a porta da conexão: "))  # The port used by the server
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
