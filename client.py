@@ -5,6 +5,7 @@ from Cryptodome.Cipher import AES
 from Crypto.Util.Padding import pad
 from Crypto.Util.Padding import unpad
 
+
 class CLIENT:
     def __init__(self, host, port, senha):
         self.host = host
