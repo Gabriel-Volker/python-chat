@@ -25,7 +25,9 @@ class SERVER:
                         print("Conexão encerrada.")
                         break
                     print(data)
-                    self.comunicar(conn)
+                    manter_conexao = self.comunicar(conn)
+                    if manter_conexao == False:
+                        break
     def comunicar(self, conn):
         while True:
             msg = input("Write your message: ")
@@ -33,6 +35,7 @@ class SERVER:
                 conn.sendall(self.criptografar(self.password, msg))
                 print("Conexão Encerrada")
                 conn.close()
+                return False
                 break
             if msg != '': 
                 conn.sendall(self.criptografar(self.password, msg))
