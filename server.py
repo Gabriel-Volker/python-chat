@@ -1,11 +1,7 @@
-
 import socket
 from Cryptodome.Cipher import AES
 from Cryptodome.Util.Padding import pad
 from Cryptodome.Util.Padding import unpad
-
-=======
-
 
 
 class SERVER:
@@ -15,25 +11,30 @@ class SERVER:
         self.password = passw
         self.text = None
     def connect(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind((self.host, self.port))
-            s.listen()
-            conn, addr = s.accept()
-            with conn:
-                print(f"Connected by {addr}")
-                while True:
-                    data = conn.recv(6144)
-                    data = self.descriptografar(self.password, data)
-                    if data == "stop":
-                        print("Conexão encerrada.")
-                        break
-                    print(data)
-                    manter_conexao = self.comunicar(conn)
-                    if manter_conexao == False:
-                        break
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind((self.host, self.port))
+                s.listen()
+                conn, addr = s.accept()
+                with conn:
+                    print(f"Conectado em: {addr}")
+                    while True:
+                        data = conn.recv(6144)
+                        data = self.descriptografar(self.password, data)
+                        if data == False:
+                            break
+                        elif data == "stop":
+                            print("Conexão encerrada.")
+                            break
+                        print(data)
+                        manter_conexao = self.comunicar(conn)
+                        if manter_conexao == False:
+                            break
+        except:
+            print('Houve um erro na conexão')
     def comunicar(self, conn):
         while True:
-            msg = input("Write your message: ")
+            msg = input("Escreva sua mensagem: ")
             if msg == "stop":
                 conn.sendall(self.criptografar(self.password, msg))
                 print("Conexão Encerrada")
@@ -41,25 +42,42 @@ class SERVER:
                 return False
                 break
             if msg != '': 
+                cripto = self.criptografar(self.password, msg)
+                if cripto == False:
+                    conn.close()
+                    return False
+                    break                  
                 conn.sendall(self.criptografar(self.password, msg))
                 break
             else:
-                print("msg nula, tente dnv")
+                print("Mensagem nula, tente novamente.")
     def criptografar(self, senha, text):
-        cipher = AES.new(senha.encode("utf-8"), AES.MODE_CBC)
-        iv = cipher.iv
-        textocodificado = iv + cipher.encrypt(pad(text.encode("utf-8"), AES.block_size))
-        return textocodificado
+        try:
+            codificacao = AES.new(senha.encode("utf-8"), AES.MODE_CBC)
+            vetor_inicializacao = codificacao.iv
+            textocodificado = vetor_inicializacao + codificacao.encrypt(pad(text.encode("utf-8"), AES.block_size))
+            return textocodificado
+        except:
+            print("Houve um erro em criptografar a mensagem.")
+            return False
     def descriptografar(self, senha, text):
-        iv = text[:16]
-        cipher = AES.new(senha.encode("utf-8"), AES.MODE_CBC, iv)
-        textocodificado = text[16:]
-        textocodificado = cipher.decrypt(textocodificado)
-        textocodificado = unpad(textocodificado, AES.block_size)
-        textocodificado = textocodificado.decode()
-        return textocodificado
+        try:
+            vetor_inicializacao = text[:16]
+            codificacao = AES.new(senha.encode("utf-8"), AES.MODE_CBC, vetor_inicializacao)
+            textodecodificado = (unpad(codificacao.decrypt(text[16:]), AES.block_size)).decode()
+            return textodecodificado
+        except:
+            print("Houve um erro na codificação da mensagem do cliente, provavelmente as senhas não coincidem")
+            return False
 ip = input("Digite seu ip interno: ")
 port = int(input("Digite a porta da conexão: "))
 senha = input("Digite uma senha de 16 caracteres para a conexão (mesma do cliente): ")
 conexao = SERVER(ip, port, senha)
-conexao.connect()
+while True:
+    conexao.connect()
+    resposta = input("Deseja continuar escutando neste ip e porta? s/n: ")
+    if resposta == "s":
+        pass
+    else:
+        exit()
+    print("Escutando novamente:")
