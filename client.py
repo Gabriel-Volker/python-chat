@@ -12,9 +12,9 @@ class CLIENT:
         self.senha = senha
     def criptografar(self, senha, text):
         try:
-            codigicacao = AES.new(senha.encode("utf-8"), AES.MODE_CBC)
-            vetor_inicializacao = codigicacao.iv
-            textocodificado = vetor_inicializacao + codigicacao.encrypt(pad(bytes(text, encoding='utf8'), AES.block_size))
+            codificacao = AES.new(senha.encode("utf-8"), AES.MODE_CBC)
+            vetor_inicializacao = codificacao.iv
+            textocodificado = vetor_inicializacao + codificacao.encrypt(pad(bytes(text, encoding='utf8'), AES.block_size))
             return textocodificado
         except:
             print("Houve um erro ao criptografar a mensagem.")
@@ -22,8 +22,8 @@ class CLIENT:
     def descriptografar(self, senha, text):
         try:
             vetor_inicializacao = text[:16]
-            codigicacao = AES.new(senha.encode("utf-8"), AES.MODE_CBC, vetor_inicializacao)
-            textodecodificado = (unpad(codigicacao.decrypt(text[16:]), AES.block_size)).decode()
+            codificacao = AES.new(senha.encode("utf-8"), AES.MODE_CBC, vetor_inicializacao)
+            textodecodificado = (unpad(codificacao.decrypt(text[16:]), AES.block_size)).decode()
             return textodecodificado
         except:
             print("Houve um erro para decodificar a mensagem, você está utilizando a senha certa?")
